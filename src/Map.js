@@ -7,6 +7,9 @@ import { useNavigate } from 'react-router-dom';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
+// Tentukan base URL API berdasarkan environment
+const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
 // Konfigurasi ikon default Leaflet
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
@@ -72,16 +75,12 @@ function MapContent({ handleMapClick, layer, inputCoords, filteredLands, suggest
         url={
           layer === 'osm'
             ? 'https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png'
-            : layer === 'esri'
-            ? 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
-            : 'https://tiles.stadiamaps.com/tiles/stamen_toner/{z}/{x}/{y}{r}.png'
+            : 'https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}'
         }
         attribution={
           layer === 'osm'
             ? '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
-            : layer === 'esri'
-            ? '© Esri'
-            : '© <a href="https://www.stadiamaps.com/" target="_blank">Stadia Maps</a> © <a href="https://www.stamen.com/" target="_blank">Stamen Design</a> © <a href="https://openmaptiles.org/" target="_blank">OpenMapTiles</a> © <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
+            : '© Esri'
         }
       />
       {inputCoords && (
@@ -407,7 +406,7 @@ function MapComponent({ auth, theme }) {
     setError('');
     const startTime = Date.now();
     try {
-      const countRes = await axios.get('http://localhost:3001/api/lands/count', {
+      const countRes = await axios.get(`${API_URL}/api/lands/count`, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       const totalCount = countRes.data.count;
@@ -418,7 +417,7 @@ function MapComponent({ auth, theme }) {
       const allLands = [];
 
       for (let page = 1; page <= totalPages; page++) {
-        const res = await axios.get(`http://localhost:3001/api/lands?page=${page}&limit=${limit}`, {
+        const res = await axios.get(`${API_URL}/api/lands?page=${page}&limit=${limit}`, {
           headers: { Authorization: `Bearer ${auth.token}` }
         });
         allLands.push(...res.data);
@@ -595,7 +594,7 @@ function MapComponent({ auth, theme }) {
   const handleDelete = async (id) => {
     if (window.confirm('Yakin hapus data ini?')) {
       try {
-        await axios.delete(`http://localhost:3001/api/lands/${id}`, {
+        await axios.delete(`${API_URL}/api/lands/${id}`, {
           headers: { Authorization: `Bearer ${auth.token}` }
         });
         setFilteredLands(filteredLands.filter(land => land._id !== id));
@@ -617,8 +616,6 @@ function MapComponent({ auth, theme }) {
       return;
     }
     fetchLands();
-
-    
   }, [auth.token, navigate]);
 
   if (!auth.token) return null;
@@ -627,49 +624,49 @@ function MapComponent({ auth, theme }) {
     <div className="relative">
       <ToastContainer position="top-center" autoClose={3000} />
       <div
-  className={`absolute bottom-4 left-4 z-[1000] bg-white dark:bg-gray-900 p-4 rounded-xl shadow-lg flex flex-col gap-3 w-full max-w-xs sm:max-w-sm transition-all duration-300 ${
-    isPanelOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
-  } ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}
->
-<div className="flex gap-2">
-  <input
-    type="text"
-    placeholder="Koordinat (-7.0863, 110.98848)"
-    value={combinedCoords}
-    onChange={(e) => setCombinedCoords(e.target.value)}
-    className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c7b81] bg-white dark:bg-gray-800 text-gray-800 dark:text-white flex-[3]"
-  />
-  <button
-    onClick={handleSearch}
-    className="p-2 bg-[#0c7b81] text-white rounded-lg hover:bg-[#095e61] transition-colors flex items-center gap-1 flex-[1]"
-  >
-    <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
-    </svg>
-    Cari
-  </button>
-</div>
-  <select
-    onChange={(e) => setYearFilter(e.target.value)}
-    value={yearFilter}
-    className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c7b81] bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
-  >
-    <option value="all">Pilih Tahun: Semua(2022-2025)</option>
-    <option value="2022">2022</option>
-    <option value="2023">2023</option>
-    <option value="2024">2024</option>
-    <option value="2025">2025</option>
-  </select>
-  <select
-    onChange={(e) => setSearchRadius(e.target.value)}
-    value={searchRadius}
-    className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c7b81] bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
-  >
-    <option value="0.5">Radius: 500 m</option>
-    <option value="1">1 km</option>
-    <option value="1.5">1.5 km</option>
-  </select>
-</div>
+        className={`absolute bottom-4 left-4 z-[1000] bg-white dark:bg-gray-900 p-4 rounded-xl shadow-lg flex flex-col gap-3 w-full max-w-xs sm:max-w-sm transition-all duration-300 ${
+          isPanelOpen ? 'translate-x-0 opacity-100' : '-translate-x-full opacity-0'
+        } ${theme === 'dark' ? 'text-white' : 'text-gray-800'}`}
+      >
+        <div className="flex gap-2">
+          <input
+            type="text"
+            placeholder="Koordinat (-7.0863, 110.98848)"
+            value={combinedCoords}
+            onChange={(e) => setCombinedCoords(e.target.value)}
+            className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c7b81] bg-white dark:bg-gray-800 text-gray-800 dark:text-white flex-[3]"
+          />
+          <button
+            onClick={handleSearch}
+            className="p-2 bg-[#0c7b81] text-white rounded-lg hover:bg-[#095e61] transition-colors flex items-center gap-1 flex-[1]"
+          >
+            <svg className="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z" />
+            </svg>
+            Cari
+          </button>
+        </div>
+        <select
+          onChange={(e) => setYearFilter(e.target.value)}
+          value={yearFilter}
+          className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c7b81] bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
+        >
+          <option value="all">Pilih Tahun: Semua(2022-2025)</option>
+          <option value="2022">2022</option>
+          <option value="2023">2023</option>
+          <option value="2024">2024</option>
+          <option value="2025">2025</option>
+        </select>
+        <select
+          onChange={(e) => setSearchRadius(e.target.value)}
+          value={searchRadius}
+          className="p-2 border border-gray-300 dark:border-gray-600 rounded-lg focus:outline-none focus:ring-2 focus:ring-[#0c7b81] bg-white dark:bg-gray-800 text-gray-800 dark:text-white"
+        >
+          <option value="0.5">Radius: 500 m</option>
+          <option value="1">1 km</option>
+          <option value="1.5">1.5 km</option>
+        </select>
+      </div>
       <button
         onClick={() => setIsPanelOpen(!isPanelOpen)}
         className="absolute top-4 left-4 z-[1001] bg-white dark:bg-gray-900 p-2 rounded-full shadow-lg text-gray-800 dark:text-white sm:hidden"
@@ -689,13 +686,6 @@ function MapComponent({ auth, theme }) {
         >
           Satellite
         </button>
-        <button
-          onClick={() => setLayer('stamen')}
-          className={`p-2 rounded-lg shadow-lg ${layer === 'stamen' ? 'bg-[#0c7b81] text-white' : 'bg-white dark:bg-gray-900 text-gray-800 dark:text-white'} hover:bg-gray-100 dark:hover:bg-gray-700`}
-        >
-          Toner
-        </button>
-        
       </div>
       {loading && (
         <div className="absolute inset-0 bg-black bg-opacity-50 flex items-center justify-center z-[1000]">
@@ -716,7 +706,7 @@ function MapComponent({ auth, theme }) {
         zoom={10}
         style={{ height: '100vh', width: '100%' }}
         className="rounded-lg"
-        zoomControl={false} // Disable default zoom control
+        zoomControl={false}
       >
         <MapContent
           handleMapClick={handleMapClick}
@@ -733,7 +723,6 @@ function MapComponent({ auth, theme }) {
         />
       </MapContainer>
     </div>
-    
   );
 }
 
