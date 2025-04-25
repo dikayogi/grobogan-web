@@ -12,11 +12,13 @@ function Admin({ auth, theme, setTheme }) {
   const [loadingUpload, setLoadingUpload] = useState(false);
   const [errorUsers, setErrorUsers] = useState('');
 
+  const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
+
   const fetchUsers = async () => {
     setLoadingUsers(true);
     setErrorUsers('');
     try {
-      const res = await axios.get('http://localhost:3001/api/users', {
+      const res = await axios.get(`${API_URL}/api/users`, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       setUsers(res.data);
@@ -44,7 +46,7 @@ function Admin({ auth, theme, setTheme }) {
     formData.append('file', file);
     setLoadingUpload(true);
     try {
-      const res = await axios.post('http://localhost:3001/api/lands/upload', formData, {
+      const res = await axios.post(`${API_URL}/api/lands/upload`, formData, {
         headers: { Authorization: `Bearer ${auth.token}`, 'Content-Type': 'multipart/form-data' }
       });
       toast.success(res.data.message);
@@ -62,7 +64,7 @@ function Admin({ auth, theme, setTheme }) {
     if (newUser.password.length < 6) return toast.error('Password minimal 6 karakter!');
 
     try {
-      const res = await axios.post('http://localhost:3001/api/register', newUser, {
+      const res = await axios.post(`${API_URL}/api/register`, newUser, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       toast.success(res.data.message);
@@ -82,7 +84,7 @@ function Admin({ auth, theme, setTheme }) {
     if (editUser.password && editUser.password.length < 6) return toast.error('Password minimal 6 karakter!');
 
     try {
-      const res = await axios.put(`http://localhost:3001/api/users/${editUser._id}`, editUser, {
+      const res = await axios.put(`${API_URL}/api/users/${editUser._id}`, editUser, {
         headers: { Authorization: `Bearer ${auth.token}` }
       });
       toast.success(res.data.message);
@@ -96,7 +98,7 @@ function Admin({ auth, theme, setTheme }) {
   const handleDeleteUser = async (id) => {
     if (window.confirm('Yakin hapus user?')) {
       try {
-        const res = await axios.delete(`http://localhost:3001/api/users/${id}`, {
+        const res = await axios.delete(`${API_URL}/api/users/${id}`, {
           headers: { Authorization: `Bearer ${auth.token}` }
         });
         toast.success(res.data.message);
