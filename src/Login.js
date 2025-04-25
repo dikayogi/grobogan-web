@@ -11,15 +11,16 @@ function Login({ setAuth, theme }) {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
+  // Gunakan REACT_APP_API_URL dari environment variable
   const API_URL = process.env.REACT_APP_API_URL || 'http://localhost:3001';
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
     try {
-      const res = await axios.post('http://localhost:3001/api/login', {
+      const res = await axios.post(`${API_URL}/api/login`, {
         username,
-        password
+        password,
       });
       const { token, role } = res.data;
       localStorage.setItem('token', token);
@@ -38,15 +39,15 @@ function Login({ setAuth, theme }) {
     <div className={`min-h-screen flex items-center justify-center ${theme === 'dark' ? 'bg-gray-900' : 'bg-gray-100'}`}>
       <ToastContainer position="top-center" autoClose={3000} />
       <div className={`p-8 rounded-lg shadow-lg w-full max-w-md ${theme === 'dark' ? 'bg-gray-800 text-white' : 'bg-white text-gray-800'}`}>
-      <img
-  src="/logosipenta.png"
-  alt="Logo siPENTΛ"
-  className="w-32 h-auto mx-auto mb-4"
-/>
-<p className="text-center text-gray-600 dark:text-gray-300 mb-6">
-        Sistem Informasi Peta Nilai Tanah Grobogan
-      </p>
-<h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
+        <img
+          src="/logosipenta.png"
+          alt="Logo siPENTΛ"
+          className="w-32 h-auto mx-auto mb-4"
+        />
+        <p className="text-center text-gray-600 dark:text-gray-300 mb-6">
+          Sistem Informasi Peta Nilai Tanah Grobogan
+        </p>
+        <h2 className="text-2xl font-bold mb-6 text-center">Login</h2>
         <form onSubmit={handleSubmit}>
           <div className="mb-4">
             <label className="block mb-2">Nama Pengguna</label>
@@ -82,22 +83,22 @@ function Login({ setAuth, theme }) {
             {loading ? 'Memuat...' : 'Masuk'}
           </button>
           <div className="flex justify-center items-center gap-4 mt-6">
-  <img
-    src="/logo.png"
-    alt="Logo Rekanan 1"
-    className="w-16 h-auto"
-  />
-  <img
-    src="/logo_pemprov.png"
-    alt="Logo Pemprov"
-    className="w-16 h-auto"
-  />
-  <img
-    src="/logo_bankjateng.png"
-    alt="Logo Bank Jateng"
-    className="w-16 h-auto"
-  />
-</div>
+            <img
+              src="/logo.png"
+              alt="Logo Rekanan 1"
+              className="w-16 h-auto"
+            />
+            <img
+              src="/logo_pemprov.png"
+              alt="Logo Pemprov"
+              className="w-16 h-auto"
+            />
+            <img
+              src="/logo_bankjateng.png"
+              alt="Logo Bank Jateng"
+              className="w-16 h-auto"
+            />
+          </div>
         </form>
       </div>
     </div>
