@@ -84,18 +84,18 @@ function Login({ setAuth, theme }) {
           </button>
           <div className="flex justify-center items-center gap-4 mt-6">
             <img
-              src="/logo.png"
-              alt="Logo Rekanan 1"
-              className="w-16 h-auto"
-            />
-            <img
               src="/logo_pemprov.png"
               alt="Logo Pemprov"
               className="w-16 h-auto"
             />
             <img
-              src="/logo_bankjateng.png"
-              alt="Logo Bank Jateng"
+              src="/logo.png"
+              alt="Logo pemkab"
+              className="w-16 h-auto"
+            />
+            <img
+              src="/logo299.png"
+              alt="Logo299"
               className="w-16 h-auto"
             />
           </div>
