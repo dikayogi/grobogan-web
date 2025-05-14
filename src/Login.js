@@ -86,17 +86,17 @@ function Login({ setAuth, theme }) {
             <img
               src="/logo_pemprov.png"
               alt="Logo Pemprov"
-              className="w-16 h-auto"
+              className="w-14 h-auto"
             />
             <img
               src="/logo.png"
               alt="Logo pemkab"
-              className="w-16 h-auto"
+              className="w-20 h-auto"
             />
             <img
               src="/logo299.png"
               alt="Logo299"
-              className="w-16 h-auto"
+              className="w-20 h-auto"
             />
           </div>
         </form>
